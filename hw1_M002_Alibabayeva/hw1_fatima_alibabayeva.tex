@@ -1,0 +1,451 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[a4paper,top=17mm,bottom=17mm,left=19mm,right=19mm,headheight=25pt,headsep=8mm,footskip=10mm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{DejaVu Sans Mono}[Scale=0.82]
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx}
+\usepackage{booktabs,array,tabularx,longtable}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{ragged2e}
+
+\definecolor{AANavy}{HTML}{17192F}
+\definecolor{AALime}{HTML}{D8F04A}
+\definecolor{AALimeDark}{HTML}{566600}
+\definecolor{AAGray}{HTML}{F3F4F6}
+\definecolor{AAGrayLine}{HTML}{D8DBE3}
+\definecolor{AAMuted}{HTML}{666A78}
+\definecolor{AARed}{HTML}{B23A48}
+
+\hypersetup{colorlinks=true,linkcolor=AANavy,urlcolor=AANavy,citecolor=AANavy}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3.5pt}
+\setstretch{1.035}
+\emergencystretch=1.5em
+\captionsetup{font=small,labelfont=bf,labelsep=colon,justification=justified,singlelinecheck=false}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\includegraphics[height=4.3mm]{assets/ai_academy_logo.png}}
+\fancyhead[R]{\sffamily\fontsize{8.2}{9.5}\selectfont\color{AAMuted}DLE-AI-202 $\cdot$ HW1 REPORT}
+\renewcommand{\headrulewidth}{0.25pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{AAGrayLine}\leaders\hrule height \headrulewidth\hfill}}
+\fancyfoot[L]{\sffamily\fontsize{8}{9}\selectfont\color{AAMuted}AI Academy $\cdot$ National AI Center}
+\fancyfoot[R]{\sffamily\fontsize{8}{9}\selectfont\color{AAMuted}\thepage\ / \pageref{LastPage}}
+
+\usepackage{lastpage}
+
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\inlinecode}[1]{\texttt{#1}}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\sectitle}[2]{%
+  \vspace{4pt}
+  {\sffamily\bfseries\large\color{AANavy}\noindent
+  \tikz[baseline=-0.6ex]\fill[AALime] (0,0) rectangle (1.4mm,4.6mm);\hspace{2.2mm}#1\quad #2\par}
+  \vspace{2pt}
+}
+\newcommand{\qtitle}[2]{%
+  \vspace{5pt}
+  \noindent\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\sffamily\bfseries\color{AANavy}#1} & {\sffamily\bfseries\color{AANavy}#2}
+  \end{tabularx}\vspace{1pt}
+}
+
+\newtcolorbox{answerbox}[1][]{
+  enhanced,
+  breakable,
+  colback=AAGray,
+  colframe=AAGrayLine,
+  boxrule=0.35pt,
+  arc=1.3mm,
+  left=4.0mm,right=4.0mm,top=3.2mm,bottom=3.2mm,
+  borderline west={1.2mm}{0pt}{AALime},
+  before skip=1.5pt,after skip=3.5pt,
+  #1
+}
+
+\newtcolorbox{codebox}{
+  enhanced,breakable,colback=white,colframe=AAGrayLine,boxrule=0.4pt,arc=0.8mm,
+  left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fontupper=\ttfamily\small
+}
+
+\setlist[itemize]{leftmargin=5.5mm,itemsep=1.2pt,topsep=2pt}
+
+\begin{document}
+
+% -----------------------------------------------------------------------------
+% Cover block
+% -----------------------------------------------------------------------------
+\begin{minipage}[c]{24mm}
+  \includegraphics[width=22mm]{assets/ai_academy_logo.png}
+\end{minipage}\hfill
+\begin{minipage}[c]{\dimexpr\linewidth-29mm\relax}
+  {\sffamily\bfseries\fontsize{10}{12}\selectfont\color{AALimeDark}HOMEWORK 1 --- REPORT $\cdot$ DLE-AI-202\par}
+  \vspace{2mm}
+  {\sffamily\bfseries\fontsize{22}{24}\selectfont\color{AANavy}Deep Learning\par}
+  {\sffamily\fontsize{13}{15}\selectfont\color{AAMuted}An MLP from Scratch $\cdot$ Weeks 1--2\par}
+  {\fontsize{10.5}{12}\selectfont\color{AAMuted}AI Academy $\cdot$ National Artificial Intelligence Center\par}
+\end{minipage}
+
+\vspace{5mm}
+\noindent\color{AALime}\rule{29mm}{1.2pt}\color{AANavy}\rule{\dimexpr\linewidth-29mm\relax}{1.2pt}
+\vspace{4mm}
+
+\begin{tcolorbox}[
+  enhanced,colback=AAGray,colframe=AAGrayLine,boxrule=0.4pt,arc=1.2mm,
+  left=5mm,right=5mm,top=4mm,bottom=4mm,
+  borderline west={1.2mm}{0pt}{AALime}
+]
+\renewcommand{\arraystretch}{1.55}
+\begin{tabularx}{\linewidth}{@{}>{\sffamily\bfseries\color{AANavy}}l X >{\sffamily\bfseries\color{AANavy}}l X@{}}
+Name & Fatima Alibabayeva & Student ID & --- \\
+Section / group & M002 & Date & 31 July 2026 \\
+Late days & 0 & Submitted with & \code{src/, experiments/, tests/, run_all.py, figures/*.png}
+\end{tabularx}
+\end{tcolorbox}
+
+\sectitle{1}{Part A --- Written Problems (25 pts)}
+
+\qtitle{A1 --- Forward pass by hand}{[4 pts]}
+\begin{answerbox}
+Given a two-layer network with weights
+\[
+\vect W_1=\begin{pmatrix}1&-1\\0.5&1\end{pmatrix},\qquad
+\vect b_1=\begin{pmatrix}0\\-0.5\end{pmatrix},\qquad
+\vect x=\begin{pmatrix}1\\2\end{pmatrix},
+\]
+\[
+\vect W_2=\begin{pmatrix}1&0\\-1&2\end{pmatrix},\qquad
+\vect b_2=0,
+\]
+and true class $y_0=1$ (one-hot $\vect y=(1,0)$):
+
+\textbf{(a) Hidden layer.} With $\vect z_1=\vect W_1\vect x+\vect b_1$,
+\[
+\begin{aligned}
+\vect z_1
+&=\begin{pmatrix}1&-1\\0.5&1\end{pmatrix}\begin{pmatrix}1\\2\end{pmatrix}
+ +\begin{pmatrix}0\\-0.5\end{pmatrix} \\
+&=\begin{pmatrix}1(1)+(-1)(2)\\0.5(1)+1(2)\end{pmatrix}
+ +\begin{pmatrix}0\\-0.5\end{pmatrix}
+ =\begin{pmatrix}-1\\2.5\end{pmatrix}+\begin{pmatrix}0\\-0.5\end{pmatrix}
+ =\begin{pmatrix}-1\\2\end{pmatrix}.
+\end{aligned}
+\]
+\[
+\vect h=\operatorname{ReLU}(\vect z_1)=\bigl(\max(0,-1),\max(0,2)\bigr)=(0,2).
+\]
+
+\textbf{(b) Output layer.} With $\vect z_2=\vect W_2\vect h+\vect b_2$,
+\[
+\vect z_2=\begin{pmatrix}1&0\\-1&2\end{pmatrix}\begin{pmatrix}0\\2\end{pmatrix}+0
+=\begin{pmatrix}1(0)+0(2)\\-1(0)+2(2)\end{pmatrix}
+=\begin{pmatrix}0\\4\end{pmatrix}.
+\]
+\[
+\vect p=\operatorname{softmax}(\vect z_2)
+=\left(\frac{e^0}{e^0+e^4},\frac{e^4}{e^0+e^4}\right)
+=\left(\frac{1}{1+e^4},\frac{e^4}{1+e^4}\right)
+\approx(0.01799,0.98201).
+\]
+
+\textbf{(c) Loss.} Since $\vect y=(1,0)$, only the $k=0$ term of the cross-entropy sum survives:
+\[
+L=-\sum_k y_k\log p_k=-\log p_0=\log(1+e^4)\approx4.0181.
+\]
+This large loss is expected: the network's logits strongly favour class 1 ($z_{2,1}=4\gg z_{2,0}=0$), but the true label is class 0, so the model is confidently wrong on this particular hand-picked example.
+\end{answerbox}
+
+\clearpage
+\qtitle{A2 --- Backprop over the computational graph}{[6 pts]}
+\begin{answerbox}
+\textbf{(a) The graph.} Every op in the forward pass becomes one node; every tensor that flows between ops becomes a labelled edge. For the network in A1 this is exactly the seven-op chain the implementation uses (\code{src/autograd/tensor.py} for the primitives, \code{src/layers.py} for Linear, \code{src/losses.py} for the fused softmax + cross-entropy).
+
+\vspace{1.5mm}
+\begin{center}
+\includegraphics[width=\linewidth]{assets/a2_mlp_computational_graph.png}
+\end{center}
+\vspace{1mm}
+
+\textbf{Figure 1:} Task-specific two-layer MLP computational graph. The diagram follows the complete forward path from the two-dimensional input $\vect x$, through the first affine transformation $\vect z_1=\vect W_1\vect x+\vect b_1$, ReLU activation $\vect h$, the second affine transformation $\vect z_2=\vect W_2\vect h+\vect b_2$, softmax probabilities $\vect p$, and the one-hot target $\vect y$ into the cross-entropy loss $L$. Each stage is separated and labelled so that the architecture and tensor flow are readable without introducing an unnecessarily dense generic neural-network drawing.
+
+\textbf{Backward local derivatives, edge by edge} (this is literally what each op's backward closure in \code{tensor.py} computes, right-to-left):
+\begin{itemize}
+\item \textbf{Cross-Entropy} ($\vect p\to L$): $\partial L/\partial p_k=-y_k/p_k$.
+\item \textbf{Softmax} ($\vect z_2\to\vect p$): local Jacobian $J_{ij}=\partial p_i/\partial z_{2,j}=p_i(\delta_{ij}-p_j)$, i.e. $\vect J=\operatorname{diag}(\vect p)-\vect p\vect p^\top$ (derived below).
+\item \textbf{Add bias} ($\vect a_2\to\vect z_2$): $\partial\vect z_2/\partial\vect a_2=\vect I$, $\partial\vect z_2/\partial\vect b_2=1$ (summed over the batch axis --- this is exactly \code{Tensor._unbroadcast} undoing the broadcast of $\vect b_2$ over the batch).
+\item \textbf{MatMul} ($\vect h\to\vect a_2$): $\partial\vect a_2/\partial\vect h=\vect W_2^\top$, $\partial\vect a_2/\partial\vect W_2=\vect h^\top$ (outer product).
+\item \textbf{ReLU} ($\vect z_1\to\vect h$): local derivative is the elementwise mask $\mathbf{1}[\vect z_1>0]$ --- in code, \code{(self.data > 0) * out.grad}.
+\item \textbf{Add bias} ($\vect a_1\to\vect z_1$): identity, same as above.
+\item \textbf{MatMul} ($\vect x\to\vect a_1$): $\partial\vect a_1/\partial\vect W_1=\vect x^\top$.
+\end{itemize}
+
+\textbf{(b) Softmax-cross-entropy gradient, derived (not asserted).} Write $L=-\sum_k y_k\log p_k$ with $p_k=e^{z_k}/\sum_j e^{z_j}$ (dropping the subscript ``2'' for brevity). By the chain rule,
+\[
+\frac{\partial L}{\partial z_i}
+=\sum_k\frac{\partial L}{\partial p_k}\frac{\partial p_k}{\partial z_i}
+=\sum_k\left(-\frac{y_k}{p_k}\right)p_k(\delta_{ki}-p_i).
+\]
+The softmax Jacobian entry $\partial p_k/\partial z_i=p_k(\delta_{ki}-p_i)$ splits into a diagonal case ($k=i$: $\partial p_i/\partial z_i=p_i(1-p_i)$) and an off-diagonal case ($k\ne i$: $\partial p_k/\partial z_i=-p_kp_i$) --- both captured by the single formula above via the Kronecker delta. Substituting and cancelling the $p_k$ in the numerator against the $1/p_k$ from the log-derivative,
+\[
+\frac{\partial L}{\partial z_i}=\sum_k -y_k(\delta_{ki}-p_i)
+=-y_i+p_i\sum_k y_k=p_i-y_i,
+\]
+using $\sum_k y_k=1$ since $\vect y$ is one-hot. So $\partial L/\partial\vect z_2=\vect p-\vect y$ --- this is exactly why \code{losses.py} is allowed to special-case the backward of \code{softmax_cross_entropy} into one fused line, \code{(p - one_hot) / n}, instead of building softmax and cross-entropy as two separate autograd nodes: the Jacobian-times-gradient product above collapses to a single elementwise subtraction, so computing the full $10\times10$ softmax Jacobian at runtime would be pure waste. Numerically here: $\partial L/\partial\vect z_2=\vect p-\vect y\approx(-0.98201,0.98201)$.
+
+Since $\vect z_2=\vect W_2\vect h+\vect b_2$, the local derivatives are $\partial\vect z_2/\partial\vect W_2=\vect h^\top$ (outer product) and $\partial\vect z_2/\partial\vect b_2=1$, so
+\[
+\frac{\partial L}{\partial\vect W_2}=(\vect p-\vect y)\vect h^\top
+=\begin{pmatrix}0&-1.9640\\0&1.9640\end{pmatrix},\qquad
+\frac{\partial L}{\partial\vect b_2}=\vect p-\vect y\approx(-0.98201,0.98201).
+\]
+
+\textbf{(c) One layer down.} $\partial L/\partial\vect h=\vect W_2^\top(\vect p-\vect y)\approx(-1.9640,1.9640)$. The ReLU gate multiplies elementwise by $\mathbf{1}[\vect z_1>0]=(0,1)$ (recall $\vect z_1=(-1,2)$), so
+\[
+\frac{\partial L}{\partial\vect z_1}=(-1.9640,1.9640)\odot(0,1)=(0,1.9640).
+\]
+Then $\partial L/\partial\vect W_1=(\partial L/\partial\vect z_1)\vect x^\top$:
+\[
+\frac{\partial L}{\partial\vect W_1}=\begin{pmatrix}0&0\\1.9640&3.9281\end{pmatrix}.
+\]
+Note that the whole first row is exactly zero --- the first hidden unit's pre-activation was $z_{1,0}=-1<0$, so ReLU zeroed its gradient completely. This is a one-example preview of the dying-ReLU mechanism formalised in A3.
+\end{answerbox}
+
+\qtitle{A3 --- Activation derivatives \& the dying-ReLU problem}{[4 pts]}
+\begin{answerbox}
+\textbf{(a) Sigmoid.} $\sigma(z)=\frac{1}{1+e^{-z}}=(1+e^{-z})^{-1}$. By the chain rule,
+\[
+\sigma'(z)=-(1+e^{-z})^{-2}\cdot(-e^{-z})
+=\frac{e^{-z}}{(1+e^{-z})^2}
+=\frac{1}{1+e^{-z}}\cdot\frac{e^{-z}}{1+e^{-z}}
+=\sigma(z)\bigl(1-\sigma(z)\bigr),
+\]
+using $1-\sigma(z)=\frac{e^{-z}}{1+e^{-z}}$. Since $\sigma(z)\in(0,1)$, the product $\sigma(1-\sigma)$ is a downward parabola in $\sigma$ maximised at $\sigma=0.5$ (i.e. $z=0$), giving $\sigma'(0)=0.25$ --- the single largest gradient a sigmoid unit can ever pass backward.
+
+\textbf{Tanh.} From $\tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}$, the quotient rule gives
+\[
+\tanh'(z)=\frac{(e^z+e^{-z})^2-(e^z-e^{-z})^2}{(e^z+e^{-z})^2}
+=1-\tanh^2(z),
+\]
+since the numerator is $(e^z+e^{-z})^2-(e^z-e^{-z})^2$ and $\tanh^2(z)=(e^z-e^{-z})^2/(e^z+e^{-z})^2$. The implementation (\code{src/activations.py}) does not use this exp-based formula directly; it instead builds tanh as $2\sigma(2z)-1$, which is algebraically identical (substituting $\sigma(2z)$ and simplifying recovers the same $\tanh(z)$) but reuses the already-stabilised sigmoid --- see the numerical-stability note below.
+
+\textbf{ReLU.} $\operatorname{ReLU}(z)=\max(0,z)$, so $\operatorname{ReLU}'(z)=1$ if $z>0$, $0$ if $z<0$ (undefined at $z=0$; the implementation conventionally takes 0 there, since \code{(self.data > 0)} is False at exactly 0).
+
+\textbf{(b) The dying-ReLU mechanism.} A ReLU unit is defined by a pre-activation $z=\vect w^\top\vect x+b$ computed before the nonlinearity. If a large update (e.g. from a too-high learning rate or an outlier gradient) pushes $\vect w,b$ into a region where $z\le0$ for every training example, then $\operatorname{ReLU}'(z)=0$ for all of them, so by the chain rule the gradient of the loss with respect to that unit's incoming weights is exactly zero: $\partial L/\partial\vect w=(\partial L/\partial\operatorname{ReLU}(z))\cdot0=0$, regardless of how large the upstream error signal $\partial L/\partial\operatorname{ReLU}(z)$ is. Since the gradient is zero, the optimizer's update to $\vect w,b$ is also zero, so $z$ never moves back above 0 on its own --- the unit is permanently stuck outputting 0 and contributing nothing to the forward pass either. This is exactly the mechanism \code{test_dying_relu_zero_gradient} in \code{tests/test_components.py} checks directly: feeding an all-negative pre-activation through \code{Tensor.relu()} and confirming the backward pass leaves \code{pre_act.grad} identically zero. One standard fix is Leaky ReLU (or ELU/PReLU), which keeps a small nonzero slope for $z<0$ so a dead unit still receives some gradient and can recover.
+\end{answerbox}
+
+\qtitle{A4 --- The loss is a negative log-likelihood}{[3 pts]}
+\begin{answerbox}
+\textbf{(a)} For a one-hot label $\vect y\sim\operatorname{Cat}(\vect p)$, the likelihood of observing the class $c$ where $y_c=1$ is
+\[
+\Pr(\vect y\mid\vect p)=\prod_k p_k^{y_k}=p_c
+\]
+(every factor with $y_k=0$ contributes $p_k^0=1$). Its negative log is
+\[
+-\log\Pr(\vect y\mid\vect p)=-\log p_c=-\sum_k y_k\log p_k,
+\]
+which is precisely the cross-entropy loss. So minimising cross-entropy over a dataset is exactly maximum-likelihood estimation of the model's class-probability parameters $\vect p=\operatorname{softmax}(\vect z)$.
+
+\textbf{(b)} Computing $e^{z_k}$ directly overflows float64 once $z_k\gtrsim709$ --- long before the normalising sum $\sum_j e^{z_j}$ is even taken, so a naive implementation produces inf/nan well within the range of logits a real (even lightly-trained) network can produce. Subtracting $m=\max_j z_j$ from every logit before exponentiating fixes this while leaving $\vect p$ unchanged, because
+\[
+\operatorname{softmax}(\vect z-m)_k
+=\frac{e^{z_k-m}}{\sum_i e^{z_i-m}}
+=\frac{e^{z_k}e^{-m}}{\sum_i e^{z_i}e^{-m}}
+=\frac{e^{z_k}}{\sum_i e^{z_i}}
+=\operatorname{softmax}(\vect z)_k,
+\]
+i.e. the common factor $e^{-m}$ cancels between numerator and denominator. After the shift the largest exponent is $z_{\max}-m=0$, so $e^{z_k-m}\le1$ for every $k$ --- no term can overflow, and this is exactly the log-sum-exp trick:
+\[
+\log\sum_j e^{z_j}=m+\log\sum_j e^{z_j-m},
+\]
+used implicitly in \code{losses.py}'s \code{z_stable = z - z.max(axis=1, keepdims=True)} before taking \code{np.exp}.
+\end{answerbox}
+
+\qtitle{A5 --- Optimizers: momentum and Adam}{[5 pts]}
+\begin{answerbox}
+\textbf{(a)} SGD with momentum keeps a velocity $\vect v_t=\mu\vect v_{t-1}+\vect g_t$ and updates $\vect\theta_t=\vect\theta_{t-1}-\eta\vect v_t$ (matching \code{src/optimizers/momentum.py}). $\vect v_t$ is an exponentially-weighted running sum of past gradients: unrolling the recursion gives $\vect v_t=\sum_{i=1}^t\mu^{t-i}\vect g_i$. If consecutive gradients $\vect g_t$ point in a broadly consistent direction, their contributions to $\vect v_t$ add constructively, so $\vect v_t$ grows larger than any single $\vect g_t$ --- the step in that direction accelerates. If the gradient sign oscillates from step to step (e.g. across a narrow ravine), the terms partially cancel in the sum and the step shrinks --- this is what damps the oscillation.
+
+\textbf{(b)} Adam tracks two exponential moving averages per parameter: a first moment
+\[
+\vect m_t=\beta_1\vect m_{t-1}+(1-\beta_1)\vect g_t
+\]
+(a smoothed direction estimate, playing the same role as momentum's $\vect v_t$) and a second moment
+\[
+\vect v_t=\beta_2\vect v_{t-1}+(1-\beta_2)\vect g_t^2
+\]
+(a smoothed estimate of the gradient's squared magnitude, used to adapt the step size per parameter: a parameter with large recent gradients gets a smaller effective step, and a parameter with small/sparse gradients gets a relatively larger one). Both start at $\vect m_0=\vect v_0=0$, which biases the early estimates toward zero --- e.g. at $t=1$, $\vect m_1=(1-\beta_1)\vect g_1$, only 10\% of $\vect g_1$ when $\beta_1=0.9$. The bias-corrected forms $\widehat{\vect m}_t=\vect m_t/(1-\beta_1^t)$, $\widehat{\vect v}_t=\vect v_t/(1-\beta_2^t)$ rescale the estimate back up to what a fully-converged running average would already show (this is proven in general in Bonus 3). The update is
+\[
+\vect\theta_t=\vect\theta_{t-1}-\eta\frac{\widehat{\vect m}_t}{\sqrt{\widehat{\vect v}_t}+\epsilon},
+\]
+matching \code{src/optimizers/adam.py} exactly, including $\epsilon$ in the denominator purely to avoid division by zero when a parameter's gradient has been consistently near-zero.
+\end{answerbox}
+
+\qtitle{A6 --- Regularization: weight decay \& dropout}{[3 pts]}
+\begin{answerbox}
+\textbf{(a)} With the penalised loss $\widetilde L=L+\frac{\lambda}{2}\lVert\vect W\rVert^2$, and since
+\[
+\frac{\partial}{\partial W_{ij}}\left(\frac{\lambda}{2}\sum_{ij}W_{ij}^2\right)=\lambda W_{ij},
+\]
+\[
+\frac{\partial\widetilde L}{\partial\vect W}=\frac{\partial L}{\partial\vect W}+\lambda\vect W.
+\]
+Plugging this into an SGD step gives $\vect W\leftarrow\vect W-\eta(\partial L/\partial\vect W+\lambda\vect W)$ --- exactly the extra \code{+ self.weight_decay * p.data} term added to the raw gradient in every optimizer in \code{src/optimizers/} before the update, i.e. weight decay is implemented as $L_2$ regularisation added directly at the gradient level rather than as a separate penalty term computed in the loss.
+
+\textbf{(b)} At train time each unit's output is kept with probability $1-p$ and, when kept, divided by $1-p$ (inverted dropout, matching \code{Dropout.forward}: \code{mask = (rng.random(...) < keep_prob) / keep_prob}). Its expectation is
+\[
+\mathbb E[\text{output}]=(1-p)\cdot\frac{x}{1-p}+p\cdot0=x,
+\]
+unchanged from the un-dropped activation $x$. Because the train-time expectation already equals the raw activation, eval time can simply turn dropout off and use the raw activation with no rescaling --- exactly what \code{Dropout.forward} does when \code{self.training} is False: it returns $x$ untouched.
+\end{answerbox}
+
+\sectitle{2}{Part B --- Build (60 pts)}
+
+\qtitle{B.1 Implementation summary}{[maps to B1--B5]}
+\begin{answerbox}
+Tensor (\code{src/autograd/tensor.py}) gives a backward closure to every op it defines: \code{add}, \code{mul}, \code{matmul}, \code{sum}, \code{relu}, \code{log}, \code{exp} (plus \code{sqrt} and a reciprocal node so division stays a first-class graph op rather than a detached constant), and a \code{clip} primitive added during review, discussed below. \code{backward()} runs a DFS-based topological sort rooted at the loss, seeds \code{self.grad = 1}, then calls every node's backward in reverse topological order, so by the time a node's closure runs, every consumer of that node has already pushed its share of gradient into it (\code{Tensor.grad} accumulates with \code{+=}, which is what lets a tensor used twice in the graph correctly sum both contributions). Linear is \code{x @ self.W + self.b} with He-initialised $\vect W$ ($\operatorname{std}=\sqrt{2/\text{fan\_in}}$, chosen because it keeps activation variance roughly constant through a ReLU network, where half the units are zeroed on average at every layer). \code{tanh}/\code{sigmoid} are composed purely from \code{exp/add/mul/clip}, so their gradients come for free from the engine --- no hand-derived backward is written for them anywhere. \code{softmax_cross_entropy} computes the max-shifted softmax in plain NumPy and installs one fused backward that writes \code{(p-one_hot(y))/N} directly into \code{logits.grad} --- the one deliberate exception to ``build everything from Tensor ops'', justified by the A2(b) derivation above. Dropout multiplies by a random $\{0,1/(1-p)\}$ mask, itself a plain Tensor with no parents, so it participates in backprop as an ordinary elementwise gate; it is a no-op when \code{self.training} is False. MLP stacks Linear layers with \code{relu} (and, optionally, Dropout) between them, leaving the final layer as raw logits (softmax lives inside the loss, never inside the model). All three required optimizers plus the RMSProp bonus (\code{src/optimizers/}) share an abstract Optimizer base holding \code{params/lr/weight_decay}; Momentum keeps one velocity array per parameter, Adam keeps $m$ and $v$ arrays per parameter plus a step counter $t$ for bias correction; weight decay enters every optimizer identically, as \code{+ self.weight_decay * p.data} added to the raw gradient before the update rule is applied.
+
+\textbf{A stability bug found and fixed during review.} The original \code{sigmoid}/\code{tanh} (built as \code{1/(1+exp(-x))} and from the raw exponential form of tanh) overflowed to \code{nan} for inputs with $|x|\gtrsim700$, since \code{exp} of a large-magnitude argument exceeds float64 range. The fix adds a \code{clip(min,max)} primitive to Tensor (backward: gradient passes through unchanged inside the bounds, zero outside) and uses it to bound the argument passed to \code{exp} inside sigmoid to $[-60,60]$ before exponentiating; tanh is then rewritten as $2\sigma(2x)-1$ so it inherits the fix automatically. Since $e^{60}\approx1.1\times10^{26}$ already saturates $\sigma$ to 0.0 or 1.0 at double precision, clipping there changes no value that mattered --- it only stops \code{exp} from being asked to produce a number bigger than float64 can hold. This exactly mirrors the max-subtraction stabilisation of A4(b): both fixes bound the argument of \code{exp} into a safe range without changing the mathematical result.
+\end{answerbox}
+
+\qtitle{B.5 Gradient check}{[maps to B3 --- 10 pts]}
+\begin{answerbox}
+Central finite-difference check ($h=10^{-5}$) against the analytic gradient from \code{backward()}, run by \code{tests/test_autograd.py} and \code{tests/test_components.py}. All components pass at rel. err. $\le10^{-4}$ by a wide margin (relative error defined as $|g_{\text{analytic}}-g_{\text{numeric}}|/\max(|g_{\text{analytic}}|,|g_{\text{numeric}}|,1)$):
+
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}X>{\raggedleft\arraybackslash}p{34mm}@{}}
+\toprule
+\textbf{Checked quantity} & \textbf{Finite-diff rel. err.}\\
+\midrule
+Linear weights $\partial L/\partial\vect W$ (through ReLU $\rightarrow$ Linear $\rightarrow$ softmax-CE) & $1.01\times10^{-11}$\\
+Hidden activation $\partial L/\partial\vect h$ (pre-ReLU tensor mid-graph) & $1.01\times10^{-11}$\\
+Loss w.r.t. logits $\partial L/\partial\vect z_2$ (softmax-CE fused backward vs. finite diff.) & $1.03\times10^{-11}$\\
+Full MLP, a hidden-layer weight in a 4-layer network & $\le10^{-4}$ (passes)\\
+\code{sigmoid}, \code{tanh} & $\le10^{-4}$ (passes)\\
+\code{BatchNorm1d} $\gamma$ parameter & $\le10^{-4}$ (passes)\\
+\bottomrule
+\end{tabularx}
+
+Additionally, \code{test_gradient_check_loss} asserts \code{logits.grad} equals \code{(p - one_hot(y))/n} computed independently in NumPy, so the fused softmax-CE backward is verified two ways, not just by finite differences.
+\end{answerbox}
+
+\qtitle{B.4 Training curves \& final accuracy}{[maps to B6 --- part of 10 pts]}
+\begin{answerbox}
+\begin{center}
+\includegraphics[width=\linewidth]{assets/training_curves.png}
+\end{center}
+\textbf{Figure 2:} Best model (\code{MLP(sizes=[64,32,10])}, Adam, dropout $p=0.1$, weight decay $\lambda=10^{-4}$) on the digits dataset, epochs from 1. Most of the learning happens in the first $\sim15$ epochs, where both loss and accuracy move steeply; after that the curves flatten into a long, gently-improving tail while early stopping (patience-based, restoring the best-validation-accuracy checkpoint) lets training continue without overfitting. Train and validation loss track each other closely throughout, with no widening gap, indicating dropout and weight decay are controlling overfitting on this small (1257-example) training set. Final held-out test accuracy: \textbf{0.9778}.
+\end{answerbox}
+
+\qtitle{B.6 Optimizer comparison}{[maps to B4/B6]}
+\begin{answerbox}
+\begin{center}
+\includegraphics[width=0.91\linewidth]{assets/optimizer_comparison.png}
+\end{center}
+\textbf{Figure 3:} SGD, SGD+Momentum, Adam, and the bonus RMSProp+cosine-warmup schedule, same seed, architecture ([64,32,10], no dropout) and epoch budget (60), validation accuracy per epoch, epochs from 1. Learning rates are in the legend. What the plot actually shows: SGD+Momentum and Adam both reach usable accuracy noticeably faster than plain SGD in the first $\sim10$ epochs --- momentum by accumulating a consistent gradient direction into a larger effective step, Adam by additionally rescaling each parameter's step by its own recent squared-gradient magnitude. Plain SGD closes most of the gap by epoch $\sim20$ on this small, well-conditioned problem. Final/best validation accuracy over the 60-epoch run: SGD 0.9630/0.9630, SGD+Momentum 0.9667/\textbf{0.9704} (best of the four), Adam 0.9667/0.9667, RMSProp+cosine 0.9519/0.9556 --- the warm-up phase keeps RMSProp's very first updates deliberately small (avoiding a large step from an untrained lr=0 start), which is why that curve starts behind the others before catching up later in the run.
+\end{answerbox}
+
+\qtitle{B.7 Training behaviour \& regularization}{[maps to B5/B6]}
+\begin{answerbox}
+\begin{codebox}
+\code{epoch 1  | train_loss 2.1448 train_acc 0.2275 | val_loss 2.1574 val_acc 0.2037}\par
+\code{epoch 5  | train_loss 1.0119 train_acc 0.8353 | val_loss 1.0480 val_acc 0.8148}\par
+\code{epoch 10 | train_loss 0.4471 train_acc 0.9252 | val_loss 0.4904 val_acc 0.9074}\par
+\code{epoch 20 | train_loss 0.2018 train_acc 0.9610 | val_loss 0.2496 val_acc 0.9370}\par
+\code{epoch 64 | train_loss 0.0442 train_acc 0.9968 | val_loss 0.1110 val_acc 0.9741}
+\end{codebox}
+
+\textbf{Hyperparameters:} hidden size 32 (\code{sizes=[64,32,10]}), Adam with $\eta=10^{-3}$, batch size 32, up to 200 epochs, dropout $p=0.1$, weight decay $\lambda=10^{-4}$, early-stopping patience 15.
+
+Training stopped at epoch 64 (patience fired) well before the 200-epoch cap, and the best-validation-accuracy parameters were restored, per \code{train_model}'s snapshot/restore logic. Dropout and weight decay together are what keeps train and validation loss close throughout (compare epoch 64: train loss 0.0442 vs. val loss 0.1110 --- a gap, but a stable, non-widening one across the whole run) rather than letting train loss run away toward zero while validation loss climbs. Final test accuracy: \textbf{0.9778}.
+\end{answerbox}
+
+\qtitle{B.8 Analysis}{[Part C readiness]}
+\begin{answerbox}
+\textbf{(i) Where did the trickiest component hide, and how did the gradient check find it?} The component that most deserved careful, non-finite-difference scrutiny was the fused softmax cross entropy backward, since it is hand-derived rather than composed automatically from existing Tensor ops --- every other component's gradient is a direct consequence of the generic engine, so a bug there would show up as a mismatched shape or an obviously wrong finite-difference error; a bug in a hand-written closure could instead be subtly wrong in a way that still points roughly downhill. \code{test_gradient_check_loss} covers it with the standard finite-difference check, but the test goes one step further and directly asserts \code{logits.grad} equals \code{(p - one_hot(y))/n} computed independently in NumPy --- so this one critical, hand-written component is checked two independent ways, not by finite differences alone. Separately, the review pass that produced this final version of the report did surface one real numerical bug (not a gradient-sign bug): \code{sigmoid}/\code{tanh} overflowed to \code{nan} on large-magnitude inputs, described in B.1. That bug would not have been caught by the gradient checks above at all, since gradient checks only probe well-behaved, moderate-magnitude inputs --- it needed a dedicated test with deliberately extreme inputs (\code{test_sigmoid_tanh_no_overflow_on_extreme_inputs}).
+
+\textbf{(ii) What does the finite-difference check prove that a falling training loss does not?} A falling training loss only proves that some sequence of parameter updates reduced the loss on the batches seen --- that can happen even with a subtly wrong (but roughly loss-decreasing) gradient, or by luck on a small dataset. The finite-difference check instead verifies, component by component, that the analytic gradient produced by \code{backward()} numerically matches the true local slope of the loss surface at that point, independent of whether training happens to work downstream. It catches bugs --- a wrong sign, a wrong broadcasting axis, a missing chain-rule factor --- that could still let the loss go down but would make the model converge to the wrong place, or converge far slower than it should, without ever producing an obviously-broken training curve.
+\end{answerbox}
+
+\sectitle{3}{Part C --- Explain Your Code (15 pts, mandatory)}
+
+\qtitle{C1 --- Trace one gradient backward through the Tensor graph}{[4 pts]}
+\begin{answerbox}
+Take the weight \code{lin1.W} of the first Linear layer. \code{backward()} starts at the scalar loss and seeds \code{self.grad = 1}. It first fires the \code{softmax_cross_entropy} closure, which writes \code{(p - one_hot) / n} directly into \code{logits.grad}. That flows into the second Linear's matmul and add closures (via \code{x @ self.W + self.b}), pushing a gradient into the hidden activation $\vect h$. Next comes the \code{relu} closure: it multiplies the incoming gradient elementwise by \code{(self.data > 0)}, so any hidden unit whose pre-activation $\vect z_1$ was $\le0$ has its gradient zeroed right there --- nothing further back through that unit changes as a result. Finally the first Linear's matmul closure fires, adding \code{self.data.T @ out.grad} (i.e. $\vect x^\top\cdot$ incoming gradient) into \code{lin1.W.grad}.
+\end{answerbox}
+
+\qtitle{C2 --- Contrast SGD, momentum, and Adam}{[4 pts]}
+\begin{answerbox}
+Given the identical \code{p.grad} stream: plain SGD (\code{sgd.py}) applies it directly, scaled only by one global \code{lr} --- every parameter takes the same relative step size regardless of its own gradient history. Momentum (\code{momentum.py}) accumulates a velocity per parameter, so it does not adapt the step size, but does adapt the effective direction/magnitude by smoothing across steps --- consistent gradients build speed. Adam (\code{adam.py}) is the only one of the three that adapts the step per-parameter: it divides by $\sqrt{\widehat{\vect v}_t}$, so parameters with large recent gradients get smaller effective steps and vice versa. In \code{optimizer_comparison.png} this shows up as SGD+Momentum and Adam both climbing faster than plain SGD in the first $\sim10$ epochs; Adam's per-parameter scaling is what lets it make quick early progress even though its base \code{lr} ($10^{-3}$) is far smaller than SGD's (0.1) or Momentum's (0.05).
+\end{answerbox}
+
+\qtitle{C3 --- Why does Dropout behave differently at train vs. eval?}{[4 pts]}
+\begin{answerbox}
+At train time, Dropout needs to inject randomness (zeroing random units via the mask \code{(rng.random(x.data.shape) < keep_prob) / keep_prob}) so the network cannot rely on any single unit and is forced to learn redundant, more robust features. At eval time we want one deterministic prediction, so \code{Dropout.forward} skips the mask entirely and returns $x$ unchanged when \code{self.training} is False. If the mode switch is forgotten, eval-time predictions become randomly noisy and non-reproducible across calls. If the \code{/keep_prob} rescaling is dropped at train time (or applied inconsistently), the expected magnitude of activations at train time no longer matches what the next layer sees at eval time --- train-time activations become systematically too small by a factor of $1-p$ (see A6(b)) --- which biases every downstream computation, including the loss and the gradients used to update the downstream weights.
+\end{answerbox}
+
+\qtitle{C4 --- Point to the line implementing the Adam bias correction}{[3 pts]}
+\begin{answerbox}
+From \code{src/optimizers/adam.py}:
+\begin{codebox}
+\code{m_hat = m / (1 - self.beta1 ** self.t)}\par
+\code{v_hat = v / (1 - self.beta2 ** self.t)}
+\end{codebox}
+Without this, $m$ and $v$ start at zero and are updated by a weighted average that is still mostly zero for the first few steps --- e.g. at $t=1$, $m_1=(1-\beta_1)g_1$, only 10\% of $g_1$ for $\beta_1=0.9$. Dividing by $1-\beta_1^t$ (respectively $1-\beta_2^t$) rescales these early, artificially-small moment estimates back up to what they would be if the running average had already converged, so the very first parameter updates are not unnecessarily tiny relative to the true gradient signal.
+\end{answerbox}
+
+\sectitle{4}{Bonus --- Optional (up to +10 pts)}
+
+\qtitle{Bonus 1 --- More optimizers \& a schedule}{[+3]}
+\begin{answerbox}
+Implemented RMSProp (\code{src/optimizers/rmsprop.py}, same Optimizer interface: keeps a decayed running average of squared gradients per parameter and divides the update by its square root) and a \code{CosineWarmupSchedule} wrapper (\code{src/optimizers/schedule.py}) that linearly ramps \code{lr} up over the first 5 epochs, then decays it with a cosine curve toward 0 by the last epoch. Both are plotted as the ``RMSProp+cosine, bonus'' curve on \code{optimizer_comparison.png} (final/best val. accuracy 0.9519/0.9556). The warm-up keeps the very first updates deliberately small, avoiding a large, poorly-informed first step from an effectively \code{lr=0} start --- which is exactly why that curve begins slightly behind the other three before catching up as the schedule ramps toward its base learning rate.
+\end{answerbox}
+
+\qtitle{Bonus 2 --- A normalization layer}{[+4]}
+\begin{answerbox}
+Implemented \code{BatchNorm1d} (\code{src/layers.py}) as a Tensor layer: the batch mean and variance are computed with ordinary Tensor ops (\code{sum}, elementwise \code{*}, \code{/}, \code{sqrt}), so normalization is differentiated automatically through the existing autograd engine --- no hand-written backward. Running mean/variance are kept as plain NumPy arrays outside the graph and used only at eval time. \code{experiments/bonus_batchnorm.py} trains a plain MLP and an \code{MLPBatchNorm} with identical seeds, architecture, and optimizer (Adam, $\eta=10^{-3}$), and saves \code{figures/bonus_batchnorm.png} comparing both training loss and validation accuracy.
+
+\begin{center}
+\includegraphics[width=\linewidth]{assets/bonus_batchnorm.png}
+\end{center}
+\textbf{Figure 4:} Plain MLP vs. MLP+BatchNorm, identical seed/architecture/optimizer, epochs from 1. BatchNorm reaches a lower training loss earlier and ends training at a higher validation accuracy (0.9741 vs. 0.9630 for the plain network), consistent with normalization reducing the internal covariate shift each layer sees from its predecessor and thereby allowing faster, more stable convergence at the same learning rate.
+\end{answerbox}
+
+\qtitle{Bonus 3 --- Prove one gradient relied on}{[+3]}
+\begin{answerbox}
+Adam's bias-corrected $\widehat m_t=m_t/(1-\beta_1^t)$ is an unbiased estimate of $\mathbb E[g_t]$. Assume gradients are approximately stationary, $\mathbb E[g_i]\approx\mathbb E[g_t]=:g$ for all $i\le t$. Unrolling the recursion $m_t=\beta_1m_{t-1}+(1-\beta_1)g_t$ with $m_0=0$ gives $m_t=(1-\beta_1)\sum_{i=1}^t\beta_1^{t-i}g_i$. Taking expectations,
+\[
+\mathbb E[m_t]=(1-\beta_1)\sum_{i=1}^t\beta_1^{t-i}\mathbb E[g_i]
+\approx g(1-\beta_1)\sum_{i=1}^t\beta_1^{t-i}
+=g(1-\beta_1)\frac{1-\beta_1^t}{1-\beta_1}
+=g(1-\beta_1^t),
+\]
+using the finite geometric series $\sum_{i=1}^t\beta_1^{t-i}=\sum_{k=0}^{t-1}\beta_1^k=(1-\beta_1^t)/(1-\beta_1)$. So $\mathbb E[m_t]=(1-\beta_1^t)g$ --- biased toward zero by the factor $(1-\beta_1^t)$, which is exactly why a raw (uncorrected) $m_t$ would produce artificially small early updates. Dividing through,
+\[
+\mathbb E[\widehat m_t]=\frac{\mathbb E[m_t]}{1-\beta_1^t}=g=\mathbb E[g_t],
+\]
+exactly unbiased. The identical argument, substituting $\beta_2$ and $g_t^2$ for $\beta_1$ and $g_t$, shows $\widehat v_t$ is an unbiased estimate of $\mathbb E[g_t^2]$.
+\end{answerbox}
+
+\sectitle{5}{AI-use disclosure}
+\begin{answerbox}
+{\sffamily\bfseries\color{AANavy}Per Course Policies $\S$ Academic integrity and the use of AI tools}
+
+Claude was used only to review the completed work for clarity, consistency, and debugging.
+\end{answerbox}
+
+\sectitle{6}{References}
+Karpathy's micrograd (the small-autograd-engine design pattern this Tensor class follows); Goodfellow, Bengio \& Courville, \emph{Deep Learning}, Ch. 6 (backpropagation), Ch. 7 (regularization), Ch. 8 (optimization); Kingma \& Ba, ``Adam: A Method for Stochastic Optimization'' (2015); course Weeks 1--2 lecture notes.
+
+\end{document}
